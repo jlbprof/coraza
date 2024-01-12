@@ -60,7 +60,7 @@ fmt.Println ("waf.go: NewWAF: 007.03")
 				return nil, fmt.Errorf("invalid WAF config from string: %w", err)
 			}
 		case r.file != "":
-fmt.Println ("waf.go: NewWAF: 007.04")
+fmt.Printf ("waf.go: NewWAF: 007.04 :%s:\n", r.file)
 			if err := parser.FromFile(r.file); err != nil {
 				return nil, fmt.Errorf("invalid WAF config from file: %w", err)
 			}
