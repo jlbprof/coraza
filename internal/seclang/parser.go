@@ -147,7 +147,7 @@ fmt.Println ("parser.go: evaluateLine: 002")
 	dir, opts, _ := strings.Cut(l, " ")
 
 fmt.Println ("parser.go: evaluateLine: 003")
-	p.options.WAF.Logger.Debug().Str("line", l).Msg("Parsing directive")
+//	p.options.WAF.Logger.Debug().Str("line", l).Msg("Parsing directive")
 fmt.Println ("parser.go: evaluateLine: 004")
 	directive := strings.ToLower(dir)
 fmt.Println ("parser.go: evaluateLine: 005")
