@@ -47,21 +47,25 @@ fmt.Println ("waf.go: NewWAF: 005")
 
 fmt.Println ("waf.go: NewWAF: 006")
 	for _, r := range c.rules {
-fmt.Println ("waf.go: NewWAF: 007")
+fmt.Println ("waf.go: NewWAF: 007.01")
 		switch {
 		case r.rule != nil:
+fmt.Println ("waf.go: NewWAF: 007.02")
 			if err := waf.Rules.Add(r.rule); err != nil {
 				return nil, fmt.Errorf("invalid WAF config from rule: %w", err)
 			}
 		case r.str != "":
+fmt.Println ("waf.go: NewWAF: 007.03")
 			if err := parser.FromString(r.str); err != nil {
 				return nil, fmt.Errorf("invalid WAF config from string: %w", err)
 			}
 		case r.file != "":
+fmt.Println ("waf.go: NewWAF: 007.04")
 			if err := parser.FromFile(r.file); err != nil {
 				return nil, fmt.Errorf("invalid WAF config from file: %w", err)
 			}
 		}
+fmt.Println ("waf.go: NewWAF: 007.END LOOP")
 	}
 
 fmt.Println ("waf.go: NewWAF: 008")
