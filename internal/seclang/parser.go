@@ -38,46 +38,68 @@ type Parser struct {
 func (p *Parser) FromFile(profilePath string) error {
 	originalDir := p.currentDir
 
+fmt.Printf ("parser.go: 001 (%s)\n", p.currentDir)
+
 	var files []string
+fmt.Println ("parser.go: 002")
 	if strings.Contains(profilePath, "*") {
+fmt.Println ("parser.go: 003")
 		var err error
 		files, err = fs.Glob(p.root, profilePath)
+fmt.Println ("parser.go: 004")
 		if err != nil {
+fmt.Println ("parser.go: 004 err")
 			return fmt.Errorf("failed to glob: %s", err.Error())
 		}
+fmt.Println ("parser.go: 005")
 	} else {
+fmt.Println ("parser.go: 006")
 		files = append(files, profilePath)
+fmt.Println ("parser.go: 007")
 	}
+fmt.Println ("parser.go: 008")
 	for _, profilePath := range files {
+fmt.Printf ("parser.go: 009 :%s:", profilePath)
 		profilePath = strings.TrimSpace(profilePath)
+fmt.Println ("parser.go: 010")
 		if !strings.HasPrefix(profilePath, "/") {
 			profilePath = filepath.Join(p.currentDir, profilePath)
 		}
+fmt.Println ("parser.go: 011")
 		p.currentFile = profilePath
 		lastDir := p.currentDir
 		p.currentDir = filepath.Dir(profilePath)
+fmt.Println ("parser.go: 012")
 		file, err := fs.ReadFile(p.root, profilePath)
+fmt.Println ("parser.go: 013")
 		if err != nil {
+fmt.Println ("parser.go: 014")
 			// we don't use defer for this as tinygo does not seem to like it
 			p.currentDir = originalDir
 			p.currentFile = ""
 			return fmt.Errorf("failed to readfile: %s", err.Error())
 		}
+fmt.Println ("parser.go: 015")
 
 		err = p.FromString(string(file))
+fmt.Println ("parser.go: 016")
 		if err != nil {
+fmt.Println ("parser.go: 017")
 			// we don't use defer for this as tinygo does not seem to like it
 			p.currentDir = originalDir
 			p.currentFile = ""
 			return fmt.Errorf("failed to parse string: %s", err.Error())
 		}
+fmt.Println ("parser.go: 018")
 		// restore the lastDir post processing all includes
 		p.currentDir = lastDir
 	}
+fmt.Println ("parser.go: 019")
 	// we don't use defer for this as tinygo does not seem to like it
 	p.currentDir = originalDir
 	p.currentFile = ""
 
+fmt.Println ("parser.go: OUT")
 	return nil
 }
 
