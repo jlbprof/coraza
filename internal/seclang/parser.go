@@ -38,42 +38,26 @@ type Parser struct {
 func (p *Parser) FromFile(profilePath string) error {
 	originalDir := p.currentDir
 
-fmt.Printf ("parser.go: 001 (%s)\n", p.currentDir)
-
 	var files []string
-fmt.Println ("parser.go: 002")
 	if strings.Contains(profilePath, "*") {
-fmt.Println ("parser.go: 003")
 		var err error
 		files, err = fs.Glob(p.root, profilePath)
-fmt.Println ("parser.go: 004")
 		if err != nil {
-fmt.Println ("parser.go: 004 err")
 			return fmt.Errorf("failed to glob: %s", err.Error())
 		}
-fmt.Println ("parser.go: 005")
 	} else {
-fmt.Println ("parser.go: 006")
 		files = append(files, profilePath)
-fmt.Println ("parser.go: 007")
 	}
-fmt.Println ("parser.go: 008")
 	for _, profilePath := range files {
-fmt.Printf ("parser.go: 009 :%s:", profilePath)
 		profilePath = strings.TrimSpace(profilePath)
-fmt.Println ("parser.go: 010")
 		if !strings.HasPrefix(profilePath, "/") {
 			profilePath = filepath.Join(p.currentDir, profilePath)
 		}
-fmt.Println ("parser.go: 011")
 		p.currentFile = profilePath
 		lastDir := p.currentDir
 		p.currentDir = filepath.Dir(profilePath)
-fmt.Println ("parser.go: 012")
 		file, err := fs.ReadFile(p.root, profilePath)
-fmt.Println ("parser.go: 013")
 		if err != nil {
-fmt.Println ("parser.go: 014")
 			// we don't use defer for this as tinygo does not seem to like it
 			p.currentDir = originalDir
 			p.currentFile = ""
@@ -84,22 +68,18 @@ fmt.Println ("parser.go: 015")
 		err = p.FromString(string(file))
 fmt.Println ("parser.go: 016")
 		if err != nil {
-fmt.Println ("parser.go: 017")
 			// we don't use defer for this as tinygo does not seem to like it
 			p.currentDir = originalDir
 			p.currentFile = ""
 			return fmt.Errorf("failed to parse string: %s", err.Error())
 		}
-fmt.Println ("parser.go: 018")
 		// restore the lastDir post processing all includes
 		p.currentDir = lastDir
 	}
-fmt.Println ("parser.go: 019")
 	// we don't use defer for this as tinygo does not seem to like it
 	p.currentDir = originalDir
 	p.currentFile = ""
 
-fmt.Println ("parser.go: OUT")
 	return nil
 }
 
@@ -107,13 +87,10 @@ fmt.Println ("parser.go: OUT")
 // It will return error if any directive fails to parse
 // or arguments are invalid
 func (p *Parser) FromString(data string) error {
-fmt.Println ("parser.go: FromString: 001")
 	scanner := bufio.NewScanner(strings.NewReader(data))
 	var linebuffer strings.Builder
 	inBackticks := false
-fmt.Println ("parser.go: FromString: 002")
 	for scanner.Scan() {
-fmt.Println ("parser.go: FromString: 003")
 		p.currentLine++
 		line := strings.TrimSpace(scanner.Text())
 		lineLen := len(line)
@@ -125,7 +102,6 @@ fmt.Println ("parser.go: FromString: 003")
 			continue
 		}
 
-fmt.Println ("parser.go: FromString: 004")
 		// Looks for a line like "SecDataset test `". The backtick starts an action list.
 		// The list will be closed only with a single "`" line.
 		if !inBackticks && line[lineLen-1] == '`' {
@@ -134,7 +110,6 @@ fmt.Println ("parser.go: FromString: 004")
 			inBackticks = false
 		}
 
-fmt.Println ("parser.go: FromString: 005")
 		if inBackticks {
 			linebuffer.WriteString(line)
 			linebuffer.WriteString("\n")
@@ -144,47 +119,43 @@ fmt.Println ("parser.go: FromString: 005")
 fmt.Println ("parser.go: FromString: 006.01")
 		// Check if line ends with \
 		if line[lineLen-1] == '\\' {
-fmt.Println ("parser.go: FromString: 006.02")
 			linebuffer.WriteString(strings.TrimSuffix(line, "\\"))
-fmt.Println ("parser.go: FromString: 006.03")
 		} else {
-fmt.Println ("parser.go: FromString: 006.04")
 			linebuffer.WriteString(line)
 fmt.Println ("parser.go: FromString: 006.05")
 			err := p.evaluateLine(linebuffer.String())
 fmt.Println ("parser.go: FromString: 006.06")
 			if err != nil {
-fmt.Println ("parser.go: FromString: 006.07")
 				return err
 			}
-fmt.Println ("parser.go: FromString: 006.08")
 			linebuffer.Reset()
-fmt.Println ("parser.go: FromString: 006.09")
 		}
-fmt.Println ("parser.go: FromString: 007")
 	}
-fmt.Println ("parser.go: FromString: 008")
 	if inBackticks {
-fmt.Println ("parser.go: FromString: 009")
 		return errors.New("backticks left open")
 	}
-fmt.Println ("parser.go: FromString: OUT")
 	return nil
 }
 
 func (p *Parser) evaluateLine(l string) error {
+fmt.Println ("parser.go: evaluateLine: 001")
 	if l == "" || l[0] == '#' {
 		panic("invalid line")
 	}
+fmt.Println ("parser.go: evaluateLine: 002")
 	// first we get the directive
 	dir, opts, _ := strings.Cut(l, " ")
 
+fmt.Println ("parser.go: evaluateLine: 003")
 	p.options.WAF.Logger.Debug().Str("line", l).Msg("Parsing directive")
+fmt.Println ("parser.go: evaluateLine: 004")
 	directive := strings.ToLower(dir)
+fmt.Println ("parser.go: evaluateLine: 005")
 
 	if len(opts) >= 3 && opts[0] == '"' && opts[len(opts)-1] == '"' {
 		opts = strings.Trim(opts, `"`)
 	}
+fmt.Println ("parser.go: evaluateLine: 006")
 	if directive == "include" {
 		// this is a special hardcoded case
 		// we cannot add it as a directive type because there are recursion issues
@@ -196,10 +167,13 @@ func (p *Parser) evaluateLine(l string) error {
 		p.includeCount++
 		return p.FromFile(opts)
 	}
+fmt.Println ("parser.go: evaluateLine: 007")
 	d, ok := directivesMap[directive]
+fmt.Println ("parser.go: evaluateLine: 008")
 	if !ok || d == nil {
 		return p.log(fmt.Sprintf("unknown directive %q", directive))
 	}
+fmt.Println ("parser.go: evaluateLine: 009")
 
 	p.options.Raw = l
 	p.options.Opts = opts
@@ -207,6 +181,7 @@ func (p *Parser) evaluateLine(l string) error {
 	p.options.Parser.ConfigFile = p.currentFile
 	p.options.Parser.ConfigDir = p.currentDir
 	p.options.Parser.Root = p.root
+fmt.Println ("parser.go: evaluateLine: 010")
 	if environment.HasAccessToFS {
 		wd, err := os.Getwd()
 		if err != nil {
@@ -215,10 +190,12 @@ func (p *Parser) evaluateLine(l string) error {
 		p.options.Parser.WorkingDir = wd
 	}
 
+fmt.Println ("parser.go: evaluateLine: 011")
 	if err := d(p.options); err != nil {
 		return fmt.Errorf("failed to compile the directive %q: %w", directive, err)
 	}
 
+fmt.Println ("parser.go: evaluateLine: OUT")
 	return nil
 }
 
