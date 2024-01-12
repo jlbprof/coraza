@@ -141,17 +141,25 @@ fmt.Println ("parser.go: FromString: 005")
 			continue
 		}
 
-fmt.Println ("parser.go: FromString: 006")
+fmt.Println ("parser.go: FromString: 006.01")
 		// Check if line ends with \
 		if line[lineLen-1] == '\\' {
+fmt.Println ("parser.go: FromString: 006.02")
 			linebuffer.WriteString(strings.TrimSuffix(line, "\\"))
+fmt.Println ("parser.go: FromString: 006.03")
 		} else {
+fmt.Println ("parser.go: FromString: 006.04")
 			linebuffer.WriteString(line)
+fmt.Println ("parser.go: FromString: 006.05")
 			err := p.evaluateLine(linebuffer.String())
+fmt.Println ("parser.go: FromString: 006.06")
 			if err != nil {
+fmt.Println ("parser.go: FromString: 006.07")
 				return err
 			}
+fmt.Println ("parser.go: FromString: 006.08")
 			linebuffer.Reset()
+fmt.Println ("parser.go: FromString: 006.09")
 		}
 fmt.Println ("parser.go: FromString: 007")
 	}
