@@ -188,8 +188,9 @@ fmt.Println ("parser.go: evaluateLine: 010.05")
 fmt.Println ("parser.go: evaluateLine: 010.06")
 	}
 
-fmt.Println ("parser.go: evaluateLine: 011")
+fmt.Println ("parser.go: evaluateLine: 011.01")
 	if err := d(p.options); err != nil {
+fmt.Println ("parser.go: evaluateLine: 011.02")
 		return fmt.Errorf("failed to compile the directive %q: %w", directive, err)
 	}
 
