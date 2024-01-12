@@ -138,11 +138,9 @@ fmt.Println ("parser.go: FromString: 006.06")
 }
 
 func (p *Parser) evaluateLine(l string) error {
-fmt.Println ("parser.go: evaluateLine: 001")
 	if l == "" || l[0] == '#' {
 		panic("invalid line")
 	}
-fmt.Println ("parser.go: evaluateLine: 002")
 	// first we get the directive
 	dir, opts, _ := strings.Cut(l, " ")
 
@@ -150,12 +148,10 @@ fmt.Println ("parser.go: evaluateLine: 003")
 //	p.options.WAF.Logger.Debug().Str("line", l).Msg("Parsing directive")
 fmt.Println ("parser.go: evaluateLine: 004")
 	directive := strings.ToLower(dir)
-fmt.Println ("parser.go: evaluateLine: 005")
 
 	if len(opts) >= 3 && opts[0] == '"' && opts[len(opts)-1] == '"' {
 		opts = strings.Trim(opts, `"`)
 	}
-fmt.Println ("parser.go: evaluateLine: 006")
 	if directive == "include" {
 		// this is a special hardcoded case
 		// we cannot add it as a directive type because there are recursion issues
@@ -167,13 +163,10 @@ fmt.Println ("parser.go: evaluateLine: 006")
 		p.includeCount++
 		return p.FromFile(opts)
 	}
-fmt.Println ("parser.go: evaluateLine: 007")
 	d, ok := directivesMap[directive]
-fmt.Println ("parser.go: evaluateLine: 008")
 	if !ok || d == nil {
 		return p.log(fmt.Sprintf("unknown directive %q", directive))
 	}
-fmt.Println ("parser.go: evaluateLine: 009")
 
 	p.options.Raw = l
 	p.options.Opts = opts
@@ -181,13 +174,18 @@ fmt.Println ("parser.go: evaluateLine: 009")
 	p.options.Parser.ConfigFile = p.currentFile
 	p.options.Parser.ConfigDir = p.currentDir
 	p.options.Parser.Root = p.root
-fmt.Println ("parser.go: evaluateLine: 010")
+fmt.Println ("parser.go: evaluateLine: 010.01")
 	if environment.HasAccessToFS {
+fmt.Println ("parser.go: evaluateLine: 010.02")
 		wd, err := os.Getwd()
+fmt.Println ("parser.go: evaluateLine: 010.03")
 		if err != nil {
+fmt.Println ("parser.go: evaluateLine: 010.04")
 			return err
 		}
+fmt.Println ("parser.go: evaluateLine: 010.05")
 		p.options.Parser.WorkingDir = wd
+fmt.Println ("parser.go: evaluateLine: 010.06")
 	}
 
 fmt.Println ("parser.go: evaluateLine: 011")
