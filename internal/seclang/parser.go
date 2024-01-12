@@ -107,10 +107,13 @@ fmt.Println ("parser.go: OUT")
 // It will return error if any directive fails to parse
 // or arguments are invalid
 func (p *Parser) FromString(data string) error {
+fmt.Println ("parser.go: FromString: 001")
 	scanner := bufio.NewScanner(strings.NewReader(data))
 	var linebuffer strings.Builder
 	inBackticks := false
+fmt.Println ("parser.go: FromString: 002")
 	for scanner.Scan() {
+fmt.Println ("parser.go: FromString: 003")
 		p.currentLine++
 		line := strings.TrimSpace(scanner.Text())
 		lineLen := len(line)
@@ -122,6 +125,7 @@ func (p *Parser) FromString(data string) error {
 			continue
 		}
 
+fmt.Println ("parser.go: FromString: 004")
 		// Looks for a line like "SecDataset test `". The backtick starts an action list.
 		// The list will be closed only with a single "`" line.
 		if !inBackticks && line[lineLen-1] == '`' {
@@ -130,12 +134,14 @@ func (p *Parser) FromString(data string) error {
 			inBackticks = false
 		}
 
+fmt.Println ("parser.go: FromString: 005")
 		if inBackticks {
 			linebuffer.WriteString(line)
 			linebuffer.WriteString("\n")
 			continue
 		}
 
+fmt.Println ("parser.go: FromString: 006")
 		// Check if line ends with \
 		if line[lineLen-1] == '\\' {
 			linebuffer.WriteString(strings.TrimSuffix(line, "\\"))
@@ -147,10 +153,14 @@ func (p *Parser) FromString(data string) error {
 			}
 			linebuffer.Reset()
 		}
+fmt.Println ("parser.go: FromString: 007")
 	}
+fmt.Println ("parser.go: FromString: 008")
 	if inBackticks {
+fmt.Println ("parser.go: FromString: 009")
 		return errors.New("backticks left open")
 	}
+fmt.Println ("parser.go: FromString: OUT")
 	return nil
 }
 
