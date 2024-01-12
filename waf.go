@@ -26,21 +26,28 @@ type WAF interface {
 
 // NewWAF creates a new WAF instance with the provided configuration.
 func NewWAF(config WAFConfig) (WAF, error) {
+fmt.Println ("waf.go: NewWAF: 001")
 	c := config.(*wafConfig)
 
+fmt.Println ("waf.go: NewWAF: 002")
 	waf := corazawaf.NewWAF()
 
+fmt.Println ("waf.go: NewWAF: 003")
 	if c.debugLogger != nil {
 		waf.Logger = c.debugLogger
 	}
 
+fmt.Println ("waf.go: NewWAF: 004")
 	parser := seclang.NewParser(waf)
 
+fmt.Println ("waf.go: NewWAF: 005")
 	if c.fsRoot != nil {
 		parser.SetRoot(c.fsRoot)
 	}
 
+fmt.Println ("waf.go: NewWAF: 006")
 	for _, r := range c.rules {
+fmt.Println ("waf.go: NewWAF: 007")
 		switch {
 		case r.rule != nil:
 			if err := waf.Rules.Add(r.rule); err != nil {
@@ -57,44 +64,64 @@ func NewWAF(config WAFConfig) (WAF, error) {
 		}
 	}
 
+fmt.Println ("waf.go: NewWAF: 008")
 	populateAuditLog(waf, c)
 
+fmt.Println ("waf.go: NewWAF: 009")
 	if err := waf.InitAuditLogWriter(); err != nil {
+fmt.Println ("waf.go: NewWAF: 010")
 		return nil, fmt.Errorf("invalid WAF config from audit log: %w", err)
 	}
 
+fmt.Println ("waf.go: NewWAF: 011")
 	if c.requestBodyAccess {
+fmt.Println ("waf.go: NewWAF: 012")
 		waf.RequestBodyAccess = true
 	}
 
+fmt.Println ("waf.go: NewWAF: 013")
 	if c.requestBodyLimit != nil {
+fmt.Println ("waf.go: NewWAF: 014")
 		waf.RequestBodyLimit = int64(*c.requestBodyLimit)
 	}
 
+fmt.Println ("waf.go: NewWAF: 015")
 	if c.requestBodyInMemoryLimit != nil {
+fmt.Println ("waf.go: NewWAF: 016")
 		waf.SetRequestBodyInMemoryLimit(int64(*c.requestBodyInMemoryLimit))
 	}
 
+fmt.Println ("waf.go: NewWAF: 017")
 	if c.responseBodyAccess {
+fmt.Println ("waf.go: NewWAF: 018")
 		waf.ResponseBodyAccess = true
 	}
 
+fmt.Println ("waf.go: NewWAF: 019")
 	if c.responseBodyLimit != nil {
+fmt.Println ("waf.go: NewWAF: 020")
 		waf.ResponseBodyLimit = int64(*c.responseBodyLimit)
 	}
 
+fmt.Println ("waf.go: NewWAF: 021")
 	if c.responseBodyMimeTypes != nil {
+fmt.Println ("waf.go: NewWAF: 022")
 		waf.ResponseBodyMimeTypes = c.responseBodyMimeTypes
 	}
 
+fmt.Println ("waf.go: NewWAF: 023")
 	if c.errorCallback != nil {
+fmt.Println ("waf.go: NewWAF: 024")
 		waf.ErrorLogCb = c.errorCallback
 	}
 
+fmt.Println ("waf.go: NewWAF: 025")
 	if err := waf.Validate(); err != nil {
+fmt.Println ("waf.go: NewWAF: 026")
 		return nil, err
 	}
 
+fmt.Println ("waf.go: NewWAF: OUT")
 	return wafWrapper{waf: waf}, nil
 }
 
